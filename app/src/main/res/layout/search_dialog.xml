@@ -6,7 +6,7 @@
     android:layout_gravity="top"
     android:layout_marginTop="5dp">
 
-    <com.project.eldalell.CustomComponent.CustomEditText
+    <com.project.eldalell.user.CustomComponent.CustomEditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:drawableEnd="@drawable/ic_search_dialog"

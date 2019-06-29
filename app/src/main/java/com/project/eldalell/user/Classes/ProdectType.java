@@ -8,7 +8,6 @@ public class ProdectType {
         this.item_category_name = item_category_name;
         this.image = image;
     }
-    int x=0;
     public ProdectType() {
     }
 
