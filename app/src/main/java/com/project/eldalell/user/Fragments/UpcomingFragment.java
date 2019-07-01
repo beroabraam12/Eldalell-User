@@ -24,8 +24,6 @@ import com.project.eldalell.user.R;
 
 
 public class UpcomingFragment extends Fragment {
-  // TODO: Rename parameter arguments, choose names that match
-  // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
   private static final String ARG_PARAM1 = "param1";
   private static final String ARG_PARAM2 = "param2";
 
@@ -85,15 +83,8 @@ public class UpcomingFragment extends Fragment {
 
     upcomingList = new ArrayList<>();
 
-    upcomingList.add(new Upcoming("Carrefour_Maadi", true,
-            "#12365", "25/4/2019  5:10am"));
-    upcomingList.add(new Upcoming("Carrefour_Maadi", false,
-            "#89654", "25/4/2019  5:10am"));
-    upcomingList.add(new Upcoming("Carrefour_Maadi", true,
-            "#56892", "25/4/2019  5:10am"));
 
-
-    rvUpcoming.setLayoutManager(new LinearLayoutManager(getContext()));
+      rvUpcoming.setLayoutManager(new LinearLayoutManager(getContext()));
     UpcomingAdapter adapter = new UpcomingAdapter(upcomingList, getActivity());
     rvUpcoming.setAdapter(adapter);
     tvTitle.setText("Orders");

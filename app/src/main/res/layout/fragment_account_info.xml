@@ -15,10 +15,28 @@
             android:layout_gravity="center"
             android:gravity="center">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/Edit_info"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorAccent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="10sp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/enter_password_only_if_you_want_to_change_password"
+                android:textColor="@color/black" />
 
             <EditText
                 android:layout_marginTop="5dp"
-                android:id="@+id/etFirstNameReg"
+                android:id="@+id/etFirstNameInfo"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
@@ -33,7 +51,7 @@
                 android:textSize="16sp" />
 
             <EditText
-                android:id="@+id/etLastNameReg"
+                android:id="@+id/etLastNameInfo"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
@@ -49,7 +67,7 @@
                 android:textSize="16sp" />
 
             <EditText
-                android:id="@+id/etEmailReg"
+                android:id="@+id/etEmailInfo"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
@@ -65,7 +83,7 @@
                 android:textSize="16sp" />
 
             <EditText
-                android:id="@+id/etPasswordReg"
+                android:id="@+id/etPasswordInfo"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
@@ -81,23 +99,7 @@
                 android:textSize="16sp" />
 
             <EditText
-                android:id="@+id/etConfirmPasswordReg"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_gravity="center"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/rectangle_shape"
-                android:hint="@string/registerConfirmPassword"
-                android:padding="10dp"
-                android:inputType="textPassword"
-                android:textColorHint="@color/colorHint"
-                android:textSize="16sp" />
-
-            <EditText
-                android:id="@+id/etPhoneReg"
+                android:id="@+id/etPhoneInfo"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
@@ -128,7 +130,7 @@
                     android:text="BirthDay" />
 
                 <TextView
-                    android:id="@+id/tvDateOfBirth"
+                    android:id="@+id/tvDateOfBirthInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -144,21 +146,21 @@
                     android:text="@string/RegisterPickGender" />
 
                 <RadioGroup
-                    android:id="@+id/rvGroup"
+                    android:id="@+id/rvGroupInfo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal">
 
                     <RadioButton
-                        android:id="@+id/rdFemale"
+                        android:id="@+id/rdFemaleInfo"
                         android:layout_width="wrap_content"
                         android:layout_height="20dp"
                         android:layout_marginLeft="10dp"
                         android:text="Female" />
 
                     <RadioButton
-                        android:id="@+id/rdMale"
+                        android:id="@+id/rdMaleInfo"
                         android:layout_width="wrap_content"
                         android:layout_height="20dp"
                         android:layout_marginLeft="50dp"
@@ -173,12 +175,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginEnd="32dp"
                 android:layout_marginStart="32dp"
-                android:layout_marginBottom="15dp"
                 android:layout_marginTop="13dp"
+                android:layout_marginEnd="32dp"
+                android:layout_marginBottom="15dp"
                 android:background="@color/colorButton"
-                android:text="Edit Info"
+                android:text="@string/Edit_info"
                 android:textColor="#ffffff"
                 android:textSize="16sp" />
 

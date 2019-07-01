@@ -117,6 +117,9 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.navLogOut:
                         Menu nav_Menu = MainActivity.nvView.getMenu();
                         nav_Menu.findItem(R.id.seeYou).setVisible(false);
+                        nav_Menu.findItem(R.id.navAccountInfo).setVisible(false);
+                        nav_Menu.findItem(R.id.navSavedAddress).setVisible(false);
+                        nav_Menu.findItem(R.id.navOrderHestory).setVisible(false);
                         tvHeaderUserName.setVisibility(View.GONE);
                         user = null;
                         SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
@@ -159,6 +162,9 @@ public class MainActivity extends AppCompatActivity {
                     currentUser.setGender(success.getString("gender"));
                     currentUser.setBlock(success.getString("block"));
                     nav_Menu.findItem(R.id.seeYou).setVisible(true);
+                    nav_Menu.findItem(R.id.navAccountInfo).setVisible(true);
+                    nav_Menu.findItem(R.id.navSavedAddress).setVisible(true);
+                    nav_Menu.findItem(R.id.navOrderHestory).setVisible(true);
                     tvHeaderUserName.setVisibility(View.VISIBLE);
                     tvHeaderUserName.setText(user.getFirst_name() + " " + user.getLast_name());
                 } catch (JSONException e) {
@@ -261,6 +267,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .show();
+    }
+
+    public static void changeInfo() {
+        tvHeaderUserName.setVisibility(View.VISIBLE);
+        tvHeaderUserName.setText(user.getFirst_name() + " " + user.getLast_name());
     }
 
 }

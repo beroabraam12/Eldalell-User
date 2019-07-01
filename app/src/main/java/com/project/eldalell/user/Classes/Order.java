@@ -7,6 +7,7 @@ public class Order {
     private float totalOrderPrice;
     private String OrderName;
     private String item_shop_id;
+    private String orderID;
 
     public Order() {
     }
@@ -32,6 +33,13 @@ public class Order {
         return totalOrderPrice;
     }
 
+    public String getOrderID() {
+        return orderID;
+    }
+
+    public void setOrderID(String orderID) {
+        this.orderID = orderID;
+    }
 
     public int getOrderQuantity() {
         return OrderQuantity;

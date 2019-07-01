@@ -213,10 +213,12 @@ public class OrderSetupFragment extends Fragment {
                     public void onResponse(String response) {
                         try {
                             JSONObject jsonObject = new JSONObject(response);
-                            JSONObject success = jsonObject.getJSONObject("success");
-                            final String orderID = success.getString("id");
+                            final String orderID = jsonObject.getString("id");
+                            int i = 0;
                             for (final Order order :orders){
-                            StringRequest request1 = new StringRequest(Request.Method.POST, connection.getAddInvoice(),
+                                CategoriesFragment.orders.get(i).setOrderID(orderID);
+                                i++;
+                                StringRequest request1 = new StringRequest(Request.Method.POST, connection.getAddInvoice(),
                                     new Response.Listener<String>() {
                                         @Override
                                         public void onResponse(String response) {

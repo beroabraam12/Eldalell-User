@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,6 +80,8 @@ public class LoginFragment extends Fragment {
     EditText etEmailLogin, etPasswordLogin;
     RequestQueue requestQueue;
     public static final String MY_PREFS_NAME = "tokenPref";
+    ProgressBar loginFragmentProgress;
+    LinearLayout loginFragmentLayout;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -87,17 +91,20 @@ public class LoginFragment extends Fragment {
         btnLogin = v.findViewById(R.id.btnLogin);
         etEmailLogin = v.findViewById(R.id.etEmailLogin);
         etPasswordLogin = v.findViewById(R.id.etPasswordLogin);
-
+        loginFragmentLayout = v.findViewById(R.id.loginFragmentLayout);
+        loginFragmentProgress = v.findViewById(R.id.loginFragmentProgress);
 
         requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO Login
                 final View view = v;
                 final String email = etEmailLogin.getText().toString().trim();
                 final String password = etPasswordLogin.getText().toString().trim();
+
+                loginFragmentProgress.setVisibility(View.VISIBLE);
+                loginFragmentLayout.setVisibility(View.GONE);
                 if ((!email.isEmpty() && !password.isEmpty())) {
                 Connection connection = new Connection();
                 StringRequest request = new StringRequest(Request.Method.POST, connection.getLoginUrl(), new Response.Listener<String>() {
@@ -117,6 +124,9 @@ public class LoginFragment extends Fragment {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        loginFragmentProgress.setVisibility(View.GONE);
+                        loginFragmentLayout.setVisibility(View.VISIBLE);
+
                         Navigation.findNavController(view).popBackStack(R.id.loginFragment, true);
                         Navigation.findNavController(view).navigate(R.id.orderSetupFragment);
                     }
@@ -134,6 +144,9 @@ public class LoginFragment extends Fragment {
                                 Toast.makeText(getContext(), "Email or password is Wrong", Toast.LENGTH_LONG).show();
                             }
                         }
+
+                        loginFragmentProgress.setVisibility(View.GONE);
+                        loginFragmentLayout.setVisibility(View.VISIBLE);
                     }
                 }) {
                     @Override

@@ -153,14 +153,6 @@ public class AddressFragment extends Fragment {
         });
 
 
-        //TODO Get City from DataBase
-
-
-
-
-        //TODO Get Districts from DataBase using Selected City
-
-
         etSelectCity.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {

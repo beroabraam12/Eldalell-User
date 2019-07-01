@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -25,6 +26,13 @@ import com.project.eldalell.user.Activity.MainActivity;
 import com.project.eldalell.user.Adapter.OrderReviewAdapter;
 import com.project.eldalell.user.Classes.Order;
 import com.project.eldalell.user.R;
+import com.pusher.client.Pusher;
+import com.pusher.client.PusherOptions;
+import com.pusher.client.channel.Channel;
+import com.pusher.client.channel.SubscriptionEventListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -64,7 +72,7 @@ public class TraceOrderFragment extends Fragment {
   }
 
   CircleImageView imgStep1, imgStep2, imgStep3;
-  TextView tvStep1, tvStep2, tvStep3, tvTitle, tvSelectedAddress;
+    TextView tvStep1, tvStep2, tvStep3, tvTitle, tvSelectedAddress, tvOrderID;
   ImageView imgBackBar, search;
   RecyclerView rvOrderPreview;
   Toolbar mainToolBar;
@@ -91,7 +99,7 @@ public class TraceOrderFragment extends Fragment {
     imgBackBar = getActivity().findViewById(R.id.imgBackBar);
     search = getActivity().findViewById(R.id.search);
     mainToolBar = getActivity().findViewById(R.id.mainToolBar);
-
+      tvOrderID = v.findViewById(R.id.tvOrderID);
     tvSelectedAddress.setVisibility(View.GONE);
     tvTitle.setText("Order Progress");
     tvTitle.setVisibility(View.VISIBLE);
@@ -115,15 +123,61 @@ public class TraceOrderFragment extends Fragment {
     Drawable background = getContext().getResources().getDrawable(R.drawable.btn_filter_shape);
     imgStep1.setBackground(background);
 
-    if (orders == null) {
-      orders = new ArrayList<>();
-    }
+      if (orders == null) {
+          orders = new ArrayList<>();
 
+      }
     rvOrderPreview.setLayoutManager(new LinearLayoutManager(getActivity()));
     OrderReviewAdapter adapter = new OrderReviewAdapter(getActivity(), orders, false);
     rvOrderPreview.setAdapter(adapter);
+      tvOrderID.setText("Order #" + orders.get(0).getOrderID());
 
 
+      PusherOptions options = new PusherOptions();
+      options.setCluster("eu");
+
+      Pusher pusher = new Pusher("837136e6b742d51c4fd6", options);
+      Channel channel = pusher.subscribe("boolean");
+      channel.bind("BolleanEvent", new SubscriptionEventListener() {
+          @Override
+          public void onEvent(String channelName, String eventName, final String data) {
+              getActivity().runOnUiThread(new Runnable() {
+                  @Override
+                  public void run() {
+                      try {
+                          JSONObject object = new JSONObject(data);
+                          String id = object.getString("id");
+                          if (id.equals(orders.get(0).getOrderID())) {
+                              String delivery_man_accepted = object.getString("delivery_man_accepted");
+                              if (delivery_man_accepted.equals("1")) {
+                                  Drawable background = getContext().getResources().getDrawable(R.drawable.btn_filter_shape);
+                                  imgStep2.setBackground(background);
+                              }
+                          }
+                      } catch (JSONException e) {
+                          e.printStackTrace();
+                          try {
+                              JSONObject object = new JSONObject(data);
+                              String id = object.getString("id");
+                              if (id.equals(orders.get(0).getOrderID())) {
+                                  String order_done = object.getString("order_done");
+                                  if (order_done.equals("1")) {
+                                      Drawable background = getContext().getResources().getDrawable(R.drawable.btn_filter_shape);
+                                      imgStep3.setBackground(background);
+                                  }
+                              }
+                          } catch (JSONException e1) {
+
+                          }
+                      }
+
+                  }
+              });
+
+          }
+      });
+
+      pusher.connect();
     return v;
   }
 

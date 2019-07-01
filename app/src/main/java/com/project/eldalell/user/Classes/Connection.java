@@ -1,12 +1,13 @@
 package com.project.eldalell.user.Classes;
 
 public class Connection {
-    private String UserHostIp = "http://192.168.1.108:5000";
-    private String AdminHostIP = "http://192.168.1.108:8000";
+    private String UserHostIp = "http://192.168.0.106:5000";
+    private String AdminHostIP = "http://192.168.0.106:8000";
 
     private String SignUpUrl = UserHostIp + "/api/register-user";
     private String LoginUrl = UserHostIp + "/api/login-user";
     private String getAuthUser = UserHostIp + "/api/user-details";
+
     private String viewCities = AdminHostIP + "/api/cities-view";
     private String getDistrict = AdminHostIP + "/api/district-city/";
     private String getShopType = AdminHostIP + "/api/shoptype-view";
@@ -22,6 +23,9 @@ public class Connection {
     private String AddAddress = AdminHostIP+"/api/address-add";
     private String UpdateAddress = AdminHostIP+"/api/address-update/";
     private String DeleteAddress = AdminHostIP+"/api/address-delete/";
+    private String UpcomingOrders = AdminHostIP + "/api/upcomming-order/";
+    private String HistoryOrders = AdminHostIP + "/api/history-order/";
+    private String EditUser = UserHostIp + "/api/edit-user/";
 
     public Connection() {
     }
@@ -105,5 +109,17 @@ public class Connection {
 
     public String getDeleteAddress() {
         return DeleteAddress;
+    }
+
+    public String getUpcomingOrders() {
+        return UpcomingOrders;
+    }
+
+    public String getHistoryOrders() {
+        return HistoryOrders;
+    }
+
+    public String getEditUser() {
+        return EditUser;
     }
 }

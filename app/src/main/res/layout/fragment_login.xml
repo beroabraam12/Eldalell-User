@@ -8,6 +8,19 @@
     android:layout_gravity="center"
     android:gravity="top">
 
+    <ProgressBar
+        android:id="@+id/loginFragmentProgress"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
+
+    <LinearLayout
+        android:visibility="visible"
+        android:id="@+id/loginFragmentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
     <ImageView
         android:layout_marginTop="50dp"
@@ -103,4 +116,5 @@
         android:textSize="16sp"
         android:text="Login"
         android:textColor="#ffffff" />
+</LinearLayout>
 </LinearLayout>

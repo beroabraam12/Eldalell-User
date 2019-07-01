@@ -8,16 +8,37 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.project.eldalell.user.Activity.MainActivity;
+import com.project.eldalell.user.Classes.Connection;
+import com.project.eldalell.user.Classes.User;
 import com.project.eldalell.user.R;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class AccountInfoFragment extends Fragment {
@@ -25,14 +46,12 @@ public class AccountInfoFragment extends Fragment {
   private static final String ARG_PARAM1 = "param1";
   private static final String ARG_PARAM2 = "param2";
 
-  // TODO: Rename and change types of parameters
   private String mParam1;
   private String mParam2;
 
   private OnFragmentInteractionListener mListener;
 
   public AccountInfoFragment() {
-    // Required empty public constructor
   }
 
   public static AccountInfoFragment newInstance(String param1, String param2) {
@@ -54,17 +73,50 @@ public class AccountInfoFragment extends Fragment {
   }
 
   TextView tvTitle;
-  private TextView tvDateOfBirth;
+  private TextView tvDateOfBirthInfo;
   private DatePickerDialog.OnDateSetListener dateDialog;
+  private EditText etFirstNameInfo, etLastNameInfo, etEmailInfo, etPasswordInfo, etPhoneInfo;
+  private RadioButton rdFemaleInfo, rdMaleInfo, radioButton;
+  private Button btnEditInfo;
+  RequestQueue requestQueue;
+  RadioGroup rvGroupInfo;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    View v = inflater.inflate(R.layout.fragment_account_info, container, false);
+    final View v = inflater.inflate(R.layout.fragment_account_info, container, false);
     tvTitle = getActivity().findViewById(R.id.tvTitleMain);
-    tvDateOfBirth = v.findViewById(R.id.tvDateOfBirth);
+    tvDateOfBirthInfo = v.findViewById(R.id.tvDateOfBirthInfo);
+    etFirstNameInfo = v.findViewById(R.id.etFirstNameInfo);
+    etLastNameInfo = v.findViewById(R.id.etLastNameInfo);
+    etEmailInfo = v.findViewById(R.id.etEmailInfo);
+    etPasswordInfo = v.findViewById(R.id.etPasswordInfo);
+    etPhoneInfo = v.findViewById(R.id.etPhoneInfo);
+    rdFemaleInfo = v.findViewById(R.id.rdFemaleInfo);
+    rdMaleInfo = v.findViewById(R.id.rdMaleInfo);
+    btnEditInfo = v.findViewById(R.id.btnEditInfo);
+    rvGroupInfo = v.findViewById(R.id.rvGroupInfo);
+    requestQueue = Volley.newRequestQueue(getContext().getApplicationContext());
 
-    tvDateOfBirth.setOnClickListener(new View.OnClickListener() {
+    if (MainActivity.user != null) {
+
+      etFirstNameInfo.setText(MainActivity.user.getFirst_name());
+      etLastNameInfo.setText(MainActivity.user.getLast_name());
+      etEmailInfo.setText(MainActivity.user.getEmail());
+      etPhoneInfo.setText(MainActivity.user.getPhone_number());
+
+      if (MainActivity.user.getGender().equalsIgnoreCase("male")) {
+        rdMaleInfo.setChecked(true);
+      } else if (MainActivity.user.getGender().equalsIgnoreCase("Female")) {
+        rdFemaleInfo.setChecked(true);
+      }
+      tvDateOfBirthInfo.setText(MainActivity.user.getBirthday());
+
+    }
+    etEmailInfo.setKeyListener(null);
+    etPhoneInfo.setKeyListener(null);
+
+    tvDateOfBirthInfo.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
         Calendar c = Calendar.getInstance();
@@ -84,14 +136,110 @@ public class AccountInfoFragment extends Fragment {
       @Override
       public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
         month = month + 1;
-        tvDateOfBirth.setText(dayOfMonth + "/" + month + "/" + year);
+        tvDateOfBirthInfo.setText(dayOfMonth + "/" + month + "/" + year);
       }
     };
     tvTitle.setText("Account Info");
 
-    //TODO Get The Account Info from DataBase
+    btnEditInfo.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        if (MainActivity.user != null) {
+          if ((!etFirstNameInfo.getText().toString().isEmpty() &&
+                  !etLastNameInfo.getText().toString().isEmpty() &&
+                  !etPhoneInfo.getText().toString().isEmpty() &&
+                  !tvDateOfBirthInfo.getText().toString().isEmpty()) &&
+                  (etPasswordInfo.getText().toString().length() >= 6 || etPasswordInfo.getText().toString().isEmpty())) {
+
+            editAccount(requestQueue, getActivity(), v);
+          } else {
+            if (etPasswordInfo.getText().toString().length() < 6 && !etPasswordInfo.getText().toString().isEmpty()) {
+              Toast.makeText(getActivity(), "Password Should be More than 6 char or number", Toast.LENGTH_LONG).show();
+            } else {
+              Toast.makeText(getActivity(), "Please Fill All Data", Toast.LENGTH_SHORT).show();
+            }
+          }
+        } else {
+          Toast.makeText(getActivity(), "Please Check if you are Login First", Toast.LENGTH_SHORT).show();
+          etPhoneInfo.setText("");
+          etFirstNameInfo.setText("");
+          etLastNameInfo.setText("");
+          etEmailInfo.setText("");
+          etPasswordInfo.setText("");
+          tvDateOfBirthInfo.setText("DD-MM-YYYY");
+        }
+
+      }
+    });
 
     return v;
+  }
+
+  private void editAccount(RequestQueue requestQueue, final Context activity, View v) {
+    final String firstName = etFirstNameInfo.getText().toString();
+    final String lastName = etLastNameInfo.getText().toString();
+    final String email = etEmailInfo.getText().toString();
+    final String password = etPasswordInfo.getText().toString();
+    final String phone = etPhoneInfo.getText().toString();
+    final String birthday = tvDateOfBirthInfo.getText().toString();
+    String gend = "";
+    int SelectedID = rvGroupInfo.getCheckedRadioButtonId();
+    radioButton = v.findViewById(SelectedID);
+    try {
+      gend = radioButton.getText().toString().trim();
+    } catch (Exception e) {
+    }
+    final String gender = gend;
+    final String userId = MainActivity.user.getId();
+    Connection connection = new Connection();
+
+    StringRequest request = new StringRequest(Request.Method.POST, connection.getEditUser() + userId,
+            new Response.Listener<String>() {
+              @Override
+              public void onResponse(String response) {
+                try {
+                  JSONObject jsonObject = new JSONObject(response);
+                  User user = new User();
+                  user.setId(jsonObject.getString("id"));
+                  user.setFirst_name(jsonObject.getString("first_name"));
+                  user.setLast_name(jsonObject.getString("last_name"));
+                  user.setEmail(jsonObject.getString("email"));
+                  user.setPhone_number(jsonObject.getString("phone_number"));
+                  user.setBirthday(jsonObject.getString("birthday"));
+                  user.setGender(jsonObject.getString("gender"));
+                  user.setBlock(jsonObject.getString("block"));
+                  MainActivity.user = user;
+                  MainActivity.changeInfo();
+                  Toast.makeText(activity, "Edit Done", Toast.LENGTH_SHORT).show();
+                } catch (JSONException e) {
+                  e.printStackTrace();
+                }
+              }
+            }, new Response.ErrorListener() {
+      @Override
+      public void onErrorResponse(VolleyError error) {
+
+      }
+    }) {
+      @Override
+      protected Map<String, String> getParams() throws AuthFailureError {
+        HashMap<String, String> param = new HashMap<>();
+        param.put("first_name", firstName);
+        param.put("last_name", lastName);
+        param.put("email", email);
+        param.put("phone_number", phone);
+        param.put("birthday", birthday);
+        param.put("gender", gender);
+        if (password.isEmpty()) {
+          return param;
+        } else {
+          param.put("password", password);
+        }
+        return param;
+      }
+    };
+    requestQueue.add(request);
+
   }
 
   public void onButtonPressed(Uri uri) {

@@ -85,5 +85,7 @@ best prices "&amp;" discounts </string>
     <string name="apartment_number_address">Apartment number</string>
     <string name="subject_address">Address Subject (Home,Jop,....)</string>
     <string name="add_address">Add Address</string>
+    <string name="Edit_info">Edit info</string>
+    <string name="enter_password_only_if_you_want_to_change_password">Enter Password Only if you want to change Password</string>
 
 </resources>
