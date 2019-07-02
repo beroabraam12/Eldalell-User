@@ -17,10 +17,23 @@ import java.util.ArrayList;
 
 import androidx.navigation.Navigation;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.project.eldalell.user.Activity.MainActivity;
+import com.project.eldalell.user.Adapter.HistoryAdapter;
 import com.project.eldalell.user.Adapter.UpcomingAdapter;
+import com.project.eldalell.user.Classes.Connection;
+import com.project.eldalell.user.Classes.History;
 import com.project.eldalell.user.Classes.Upcoming;
 import com.project.eldalell.user.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class UpcomingFragment extends Fragment {
@@ -60,10 +73,12 @@ public class UpcomingFragment extends Fragment {
   Toolbar mainbar;
   ImageView imgBackBar;
   public static boolean fromUpcoming = false;
+  RequestQueue requestQueue;
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
     View v = inflater.inflate(R.layout.fragment_upcoming, container, false);
+    requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
     tvTitle = getActivity().findViewById(R.id.tvTitleMain);
     rvUpcoming = v.findViewById(R.id.rvOrdersUpcoming);
     tvHistory = v.findViewById(R.id.tvHistory);
@@ -81,15 +96,56 @@ public class UpcomingFragment extends Fragment {
       }
     });
 
-    upcomingList = new ArrayList<>();
+    upcomingList = getUpCommingOrders(requestQueue, getContext());
 
 
-      rvUpcoming.setLayoutManager(new LinearLayoutManager(getContext()));
-    UpcomingAdapter adapter = new UpcomingAdapter(upcomingList, getActivity());
-    rvUpcoming.setAdapter(adapter);
+
     tvTitle.setText("Orders");
 
     return v;
+  }
+
+  private ArrayList<Upcoming> getUpCommingOrders(RequestQueue requestQueue, final Context context) {
+    final ArrayList<Upcoming> upcomings = new ArrayList<>();
+    String UserID = MainActivity.user.getId();
+
+    final Connection connection = new Connection();
+
+    StringRequest request = new StringRequest(Request.Method.GET, connection.getHistoryOrders() + UserID,
+            new Response.Listener<String>() {
+              @Override
+              public void onResponse(String response) {
+                try {
+                  JSONObject object = new JSONObject(response);
+                  JSONArray Orders = object.getJSONArray("orders");
+                  for (int i = 0; i < Orders.length(); i++) {
+                    JSONObject order = Orders.getJSONObject(i);
+                    Upcoming upcoming = new Upcoming();
+                    upcoming.setImage(connection.getAdminHostIP() + order.getString("logo"));
+                    upcoming.setOrderID(order.getString("id"));
+                    upcoming.setOrderDate(order.getString("updated_at"));
+                    upcoming.setShopName(order.getString("shop_name"));
+                    upcoming.setOrderStatus(true);
+                    upcoming.setShopID(order.getString("shop_id"));
+                    upcoming.setNote(order.getString("note_for_delivery"));
+                    upcomings.add(upcoming);
+                  }
+                  rvUpcoming.setLayoutManager(new LinearLayoutManager(getContext()));
+                  UpcomingAdapter adapter = new UpcomingAdapter(upcomings, getActivity());
+                  rvUpcoming.setAdapter(adapter);
+                } catch (JSONException e) {
+                  e.printStackTrace();
+                }
+              }
+            }, new Response.ErrorListener() {
+      @Override
+      public void onErrorResponse(VolleyError error) {
+
+      }
+    });
+
+    requestQueue.add(request);
+    return upcomings;
   }
 
   public void onButtonPressed(Uri uri) {

@@ -16,9 +16,21 @@ import java.util.ArrayList;
 
 import androidx.navigation.Navigation;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.project.eldalell.user.Activity.MainActivity;
 import com.project.eldalell.user.Adapter.HistoryAdapter;
+import com.project.eldalell.user.Classes.Connection;
 import com.project.eldalell.user.Classes.History;
 import com.project.eldalell.user.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class OrderHistoryFragment extends Fragment {
@@ -55,6 +67,7 @@ public class OrderHistoryFragment extends Fragment {
   RecyclerView rvOrders;
   ArrayList<History> ordersList;
   TextView tvTitle, tvUpcoming;
+  RequestQueue requestQueue;
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,7 +77,7 @@ public class OrderHistoryFragment extends Fragment {
     rvOrders = v.findViewById(R.id.rvOrders);
     tvTitle = getActivity().findViewById(R.id.tvTitleMain);
     tvUpcoming = v.findViewById(R.id.tvUpcoming);
-
+    requestQueue = Volley.newRequestQueue(getActivity().getApplicationContext());
     tvUpcoming.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
@@ -74,26 +87,53 @@ public class OrderHistoryFragment extends Fragment {
     });
 
     tvTitle.setText("Orders");
-    ordersList = new ArrayList<>();
+    ordersList = getHistoryOrder(requestQueue, getContext());
 
-
-    //TODO Get Order History Form DataBase
-
-    ordersList.add(new History("Carrefour_Maadi", true,
-            "#12365", "25/4/2019  5:10am"));
-    ordersList.add(new History("Carrefour_Maadi", false,
-            "#89654", "25/4/2019  5:10am"));
-    ordersList.add(new History("Carrefour_Maadi", false,
-            "#56892", "25/4/2019  5:10am"));
-    ordersList.add(new History("Carrefour_Maadi", true,
-            "#21198", "25/4/2019  5:10am"));
-
-
-    rvOrders.setLayoutManager(new LinearLayoutManager(getContext()));
-    HistoryAdapter adapter = new HistoryAdapter(ordersList, getActivity());
-    rvOrders.setAdapter(adapter);
 
     return v;
+  }
+
+  private ArrayList<History> getHistoryOrder(RequestQueue requestQueue, final Context context) {
+    final ArrayList<History> histories = new ArrayList<>();
+    String UserID = MainActivity.user.getId();
+
+    final Connection connection = new Connection();
+
+    StringRequest request = new StringRequest(Request.Method.GET, connection.getHistoryOrders() + UserID,
+            new Response.Listener<String>() {
+              @Override
+              public void onResponse(String response) {
+                try {
+                  JSONObject object = new JSONObject(response);
+                  JSONArray Orders = object.getJSONArray("orders");
+                  for (int i = 0; i < Orders.length(); i++) {
+                    JSONObject order = Orders.getJSONObject(i);
+                    History history = new History();
+                    history.setImage(connection.getAdminHostIP() + order.getString("logo"));
+                    history.setOrderID(order.getString("id"));
+                    history.setOrderDate(order.getString("updated_at"));
+                    history.setShopName(order.getString("shop_name"));
+                    history.setOrderStatus(true);
+                    history.setShopID(order.getString("shop_id"));
+                    history.setNote(order.getString("note_for_delivery"));
+                    histories.add(history);
+                  }
+                  rvOrders.setLayoutManager(new LinearLayoutManager(context));
+                  HistoryAdapter adapter = new HistoryAdapter(ordersList, getActivity());
+                  rvOrders.setAdapter(adapter);
+                } catch (JSONException e) {
+                  e.printStackTrace();
+                }
+              }
+            }, new Response.ErrorListener() {
+      @Override
+      public void onErrorResponse(VolleyError error) {
+
+      }
+    });
+
+    requestQueue.add(request);
+    return histories;
   }
 
   public void onButtonPressed(Uri uri) {

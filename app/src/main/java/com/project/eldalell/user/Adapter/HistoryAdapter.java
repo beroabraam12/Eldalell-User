@@ -7,7 +7,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.navigation.Navigation;
+
+import com.bumptech.glide.Glide;
 import com.project.eldalell.user.Classes.History;
 import com.project.eldalell.user.R;
 
@@ -39,22 +45,28 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     public void onBindViewHolder(@NonNull HistoryViewHolder historyViewHolder, int i) {
 
         History curruntHistory = new History();
-        curruntHistory.setOrderName(HistoryList.get(i).getOrderName());
+        curruntHistory.setShopName(HistoryList.get(i).getShopName());
         curruntHistory.setOrderDate(HistoryList.get(i).getOrderDate());
         curruntHistory.setOrderID(HistoryList.get(i).getOrderID());
         curruntHistory.setOrderStatus(HistoryList.get(i).isOrderStatus());
+        curruntHistory.setImage(HistoryList.get(i).getImage());
 
-        historyViewHolder.tvName.setText(curruntHistory.getOrderName());
+        historyViewHolder.tvName.setText(curruntHistory.getShopName());
         historyViewHolder.tvDate.setText(curruntHistory.getOrderDate());
         historyViewHolder.tvID.setText(curruntHistory.getOrderID());
-        if (HistoryList.get(i).isOrderStatus()) {
-            historyViewHolder.tvStatue.setText("Successful");
-            historyViewHolder.tvStatue.setTextColor(Color.GREEN);
-        } else {
-            historyViewHolder.tvStatue.setText("Failed");
-            historyViewHolder.tvStatue.setTextColor(Color.RED);
-        }
-
+        historyViewHolder.tvStatue.setText("Successful");
+        historyViewHolder.tvStatue.setTextColor(Color.GREEN);
+        Glide.with(activity)
+                .load(curruntHistory.getImage())
+                .centerCrop()
+                .placeholder(R.drawable.carfor)
+                .into(historyViewHolder.imgLogo);
+        historyViewHolder.History.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Navigation.findNavController(v).navigate(R.id.traceOrderFragment);
+            }
+        });
 
     }
 
@@ -67,14 +79,17 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     class HistoryViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvName, tvDate, tvID, tvStatue;
-
+        ImageView imgLogo;
+        LinearLayout History;
         public HistoryViewHolder(View itemView) {
             super(itemView);
 
-            tvName = (TextView) itemView.findViewById(R.id.tvOrder);
-            tvDate = (TextView) itemView.findViewById(R.id.tvOrderDateAndTime);
-            tvID = (TextView) itemView.findViewById(R.id.tvOrderID);
-            tvStatue = (TextView) itemView.findViewById(R.id.tvOrderStatus);
+            tvName = itemView.findViewById(R.id.tvOrder);
+            tvDate = itemView.findViewById(R.id.tvOrderDateAndTime);
+            tvID = itemView.findViewById(R.id.tvOrderID);
+            tvStatue = itemView.findViewById(R.id.tvOrderStatus);
+            imgLogo = itemView.findViewById(R.id.imgLogo);
+            History = itemView.findViewById(R.id.History);
 
         }
     }

@@ -1,30 +1,47 @@
 package com.project.eldalell.user.Classes;
 
+
 public class History {
 
-  private String OrderName, OrderID, OrderDate;
+  private String OrderID, OrderDate, ShopID, Image, ShopName, note;
   private boolean OrderStatus;
 
-  public History(String OrderName, boolean OrderStatus, String OrderID, String OrderDate) {
-    this.OrderName = OrderName;
+  public History(boolean OrderStatus, String OrderID, String OrderDate
+          , String ShopID, String Image, String ShopName) {
     this.OrderStatus = OrderStatus;
     this.OrderID = OrderID;
+    this.ShopID = ShopID;
     this.OrderDate = OrderDate;
-
+    this.Image = Image;
+    this.ShopName = ShopName;
   }
 
   public History() {
   }
 
-
-  public String getOrderName() {
-    return OrderName;
+  public String getShopID() {
+    return ShopID;
   }
 
-  public void setOrderName(String OrderName) {
-    this.OrderName = OrderName;
+  public void setShopID(String shopID) {
+    ShopID = shopID;
   }
 
+  public String getImage() {
+    return Image;
+  }
+
+  public void setImage(String image) {
+    Image = image;
+  }
+
+  public void setShopName(String shopName) {
+    ShopName = shopName;
+  }
+
+  public String getShopName() {
+    return ShopName;
+  }
 
   public String getOrderDate() {
     return OrderDate;
@@ -50,5 +67,13 @@ public class History {
 
   public void setOrderStatus(boolean orderStatus) {
     OrderStatus = orderStatus;
+  }
+
+  public String getNote() {
+    return note;
+  }
+
+  public void setNote(String note) {
+    this.note = note;
   }
 }

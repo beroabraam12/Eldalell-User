@@ -1,8 +1,8 @@
 package com.project.eldalell.user.Classes;
 
 public class Connection {
-    private String UserHostIp = "http://192.168.0.106:5000";
-    private String AdminHostIP = "http://192.168.0.106:8000";
+    private String UserHostIp = "http://192.168.1.108:5000";
+    private String AdminHostIP = "http://192.168.1.108:8000";
 
     private String SignUpUrl = UserHostIp + "/api/register-user";
     private String LoginUrl = UserHostIp + "/api/login-user";
@@ -24,7 +24,7 @@ public class Connection {
     private String UpdateAddress = AdminHostIP+"/api/address-update/";
     private String DeleteAddress = AdminHostIP+"/api/address-delete/";
     private String UpcomingOrders = AdminHostIP + "/api/upcomming-order/";
-    private String HistoryOrders = AdminHostIP + "/api/history-order/";
+    private String HistoryOrders = AdminHostIP + "/api/invoice-order/";
     private String EditUser = UserHostIp + "/api/edit-user/";
 
     public Connection() {

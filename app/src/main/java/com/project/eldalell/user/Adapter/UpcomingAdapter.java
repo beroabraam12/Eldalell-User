@@ -8,10 +8,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.navigation.Navigation;
 
+import com.bumptech.glide.Glide;
 import com.project.eldalell.user.Classes.Upcoming;
 import com.project.eldalell.user.R;
 
@@ -44,21 +46,26 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
     public void onBindViewHolder(@NonNull UpcomingAdapter.UpcomingViewHolder upcomingViewHolder, int i) {
 
         Upcoming upcoming = new Upcoming();
-        upcoming.setOrderName(upcomings.get(i).getOrderName());
+        upcoming.setShopName(upcomings.get(i).getShopName());
         upcoming.setOrderDate(upcomings.get(i).getOrderDate());
         upcoming.setOrderID(upcomings.get(i).getOrderID());
         upcoming.setOrderStatus(upcomings.get(i).isOrderStatus());
 
-        upcomingViewHolder.tvName.setText(upcoming.getOrderName());
+        upcomingViewHolder.tvName.setText(upcoming.getShopName());
         upcomingViewHolder.tvDate.setText(upcoming.getOrderDate());
         upcomingViewHolder.tvID.setText(upcoming.getOrderID());
         if (upcoming.isOrderStatus()) {
-            upcomingViewHolder.tvStatue.setText("Vendor Accepted Order");
+            upcomingViewHolder.tvStatue.setText("Delivery Take Order");
             upcomingViewHolder.tvStatue.setTextColor(Color.GREEN);
         } else {
-            upcomingViewHolder.tvStatue.setText("Order Denied");
+            upcomingViewHolder.tvStatue.setText("order Submitted");
             upcomingViewHolder.tvStatue.setTextColor(Color.RED);
         }
+        Glide.with(activity)
+                .load(upcoming.getImage())
+                .centerCrop()
+                .placeholder(R.drawable.carfor)
+                .into(upcomingViewHolder.imgUpcoming);
 
         upcomingViewHolder.upcomingCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +87,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
 
         TextView tvName, tvDate, tvID, tvStatue;
         CardView upcomingCard;
+        ImageView imgUpcoming;
 
         public UpcomingViewHolder(View itemView) {
             super(itemView);
@@ -89,7 +97,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.Upcomi
             tvID = itemView.findViewById(R.id.tvOrderIDUp);
             tvStatue = itemView.findViewById(R.id.tvOrderStatusUp);
             upcomingCard = itemView.findViewById(R.id.upcomingCard);
-
+            imgUpcoming = itemView.findViewById(R.id.imgUpcoming);
 
         }
     }

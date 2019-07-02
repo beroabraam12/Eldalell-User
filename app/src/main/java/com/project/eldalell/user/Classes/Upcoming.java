@@ -1,11 +1,11 @@
 package com.project.eldalell.user.Classes;
 
 public class Upcoming {
-  private String OrderName, OrderID, OrderDate;
+  private String shopName, OrderID, OrderDate, image, shopID, note;
   private boolean OrderStatus;
 
-  public Upcoming(String OrderName, boolean OrderStatus, String OrderID, String OrderDate) {
-    this.OrderName = OrderName;
+  public Upcoming(boolean OrderStatus, String OrderID, String OrderDate) {
+
     this.OrderStatus = OrderStatus;
     this.OrderID = OrderID;
     this.OrderDate = OrderDate;
@@ -16,13 +16,6 @@ public class Upcoming {
   }
 
 
-  public String getOrderName() {
-    return OrderName;
-  }
-
-  public void setOrderName(String OrderName) {
-    this.OrderName = OrderName;
-  }
 
 
   public String getOrderDate() {
@@ -48,5 +41,37 @@ public class Upcoming {
 
   public void setOrderStatus(boolean orderStatus) {
     OrderStatus = orderStatus;
+  }
+
+  public String getShopName() {
+    return shopName;
+  }
+
+  public void setShopName(String shopName) {
+    this.shopName = shopName;
+  }
+
+  public String getImage() {
+    return image;
+  }
+
+  public void setImage(String image) {
+    this.image = image;
+  }
+
+  public String getShopID() {
+    return shopID;
+  }
+
+  public void setShopID(String shopID) {
+    this.shopID = shopID;
+  }
+
+  public String getNote() {
+    return note;
+  }
+
+  public void setNote(String note) {
+    this.note = note;
   }
 }

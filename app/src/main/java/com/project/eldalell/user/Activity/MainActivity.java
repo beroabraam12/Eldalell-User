@@ -125,6 +125,8 @@ public class MainActivity extends AppCompatActivity {
                         SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
                         editor.putString("token", null);
                         editor.apply();
+                        navController.popBackStack();
+                        navController.navigate(R.id.addressFragment);
                         break;
 
                 }
