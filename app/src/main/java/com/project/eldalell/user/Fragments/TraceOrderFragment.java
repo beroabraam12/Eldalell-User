@@ -142,10 +142,6 @@ public class TraceOrderFragment extends Fragment {
       Drawable back = getContext().getResources().getDrawable(R.drawable.step_unfinish);
     imgStep1.setBackground(background);
 
-      if (orders == null) {
-          orders = new ArrayList<>();
-
-      }
 
       if (OrderHistoryFragment.fromHistory) {
           imgStep2.setBackground(background);
@@ -200,7 +196,7 @@ public class TraceOrderFragment extends Fragment {
                               if (id.equals(orders.get(0).getOrderID())) {
                                   String order_done = object.getString("order_done");
                                   if (order_done.equals("1")) {
-                                      Drawable background = getContext().getResources().getDrawable(R.drawable.btn_filter_shape);
+                                      Drawable background = activity.getResources().getDrawable(R.drawable.btn_filter_shape);
                                       imgStep3.setBackground(background);
                                   }
                               }
