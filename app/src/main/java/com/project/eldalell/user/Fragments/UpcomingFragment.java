@@ -72,7 +72,7 @@ public class UpcomingFragment extends Fragment {
   ArrayList<Upcoming> upcomingList;
   Toolbar mainbar;
   ImageView imgBackBar;
-  public static boolean fromUpcoming = false;
+  public static boolean fromUpcoming = false, inUpComing = false;
   RequestQueue requestQueue;
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -105,19 +105,19 @@ public class UpcomingFragment extends Fragment {
     return v;
   }
 
-  private ArrayList<Upcoming> getUpCommingOrders(RequestQueue requestQueue, final Context context) {
+  private ArrayList<Upcoming> getUpCommingOrders(final RequestQueue requestQueue, final Context context) {
     final ArrayList<Upcoming> upcomings = new ArrayList<>();
     String UserID = MainActivity.user.getId();
 
     final Connection connection = new Connection();
 
-    StringRequest request = new StringRequest(Request.Method.GET, connection.getHistoryOrders() + UserID,
+    StringRequest request = new StringRequest(Request.Method.GET, connection.getUpcomingOrders() + UserID,
             new Response.Listener<String>() {
               @Override
               public void onResponse(String response) {
                 try {
                   JSONObject object = new JSONObject(response);
-                  JSONArray Orders = object.getJSONArray("orders");
+                  JSONArray Orders = object.getJSONArray("Orders");
                   for (int i = 0; i < Orders.length(); i++) {
                     JSONObject order = Orders.getJSONObject(i);
                     Upcoming upcoming = new Upcoming();
@@ -128,10 +128,16 @@ public class UpcomingFragment extends Fragment {
                     upcoming.setOrderStatus(true);
                     upcoming.setShopID(order.getString("shop_id"));
                     upcoming.setNote(order.getString("note_for_delivery"));
+                    if (order.getString("delivery_man_accepted").equalsIgnoreCase("0")) {
+                      upcoming.setOrderStatus(false);
+                    } else if (order.getString("delivery_man_accepted").equalsIgnoreCase("1")) {
+                      upcoming.setOrderStatus(true);
+                    }
+
                     upcomings.add(upcoming);
                   }
                   rvUpcoming.setLayoutManager(new LinearLayoutManager(getContext()));
-                  UpcomingAdapter adapter = new UpcomingAdapter(upcomings, getActivity());
+                  UpcomingAdapter adapter = new UpcomingAdapter(upcomings, getActivity(), requestQueue);
                   rvUpcoming.setAdapter(adapter);
                 } catch (JSONException e) {
                   e.printStackTrace();

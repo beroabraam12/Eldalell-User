@@ -128,7 +128,7 @@ public class AddressesAdapter extends RecyclerView.Adapter<AddressesAdapter.Addr
         }
     }
 
-    public void delete(final int position, RequestQueue requestQueue) { //removes the row
+    public void delete(final int position, final RequestQueue requestQueue) { //removes the row
         String addressID = AddressList.get(position).getId();
         Connection connection = new Connection();
 

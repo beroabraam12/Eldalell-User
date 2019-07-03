@@ -68,11 +68,10 @@ public class OrderHistoryFragment extends Fragment {
   ArrayList<History> ordersList;
   TextView tvTitle, tvUpcoming;
   RequestQueue requestQueue;
-
+    public static boolean fromHistory = false;
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
-    // Inflate the layout for this fragment
     View v = inflater.inflate(R.layout.fragment_order_history, container, false);
     rvOrders = v.findViewById(R.id.rvOrders);
     tvTitle = getActivity().findViewById(R.id.tvTitleMain);
@@ -86,7 +85,8 @@ public class OrderHistoryFragment extends Fragment {
       }
     });
 
-    tvTitle.setText("Orders");
+
+      tvTitle.setText("Orders");
     ordersList = getHistoryOrder(requestQueue, getContext());
 
 

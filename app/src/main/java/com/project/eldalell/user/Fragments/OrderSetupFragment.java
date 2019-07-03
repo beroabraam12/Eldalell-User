@@ -77,7 +77,7 @@ public class OrderSetupFragment extends Fragment {
     ImageView imgBackReview;
     Button btnSubmit;
     public static Address currentAddress;
-    public static boolean fromOrderSetup = false, orderSubmitted = false;
+    public static boolean fromOrderSetup, orderSubmitted = false;
     Toolbar mainbar;
     RequestQueue requestQueue;
     @SuppressLint("ClickableViewAccessibility")
@@ -101,7 +101,6 @@ public class OrderSetupFragment extends Fragment {
         tvFloorDetails = v.findViewById(R.id.tvFloorDetails);
         tvApartmentDetails = v.findViewById(R.id.tvApartmentDetails);
         mainbar = getActivity().findViewById(R.id.mainToolBar);
-        fromOrderSetup = false;
         mainbar.setVisibility(View.GONE);
         AddAddressFragment.fromOrder=true;
         if (currentAddress != null) {
@@ -162,6 +161,7 @@ public class OrderSetupFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Navigation.findNavController(v).navigate(R.id.addAddressFragment);
+                fromOrderSetup = true;
             }
         });
 
@@ -169,7 +169,6 @@ public class OrderSetupFragment extends Fragment {
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO SubMit Order to DataBase and send into Trace Order
                 if (currentAddress!=null)
                 {
                 submitOrder(v);

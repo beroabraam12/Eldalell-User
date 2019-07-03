@@ -1,8 +1,8 @@
 package com.project.eldalell.user.Classes;
 
 public class Connection {
-    private String UserHostIp = "http://192.168.1.108:5000";
-    private String AdminHostIP = "http://192.168.1.108:8000";
+    private String UserHostIp = "http://192.168.43.187:5000";
+    private String AdminHostIP = "http://192.168.43.187:8000";
 
     private String SignUpUrl = UserHostIp + "/api/register-user";
     private String LoginUrl = UserHostIp + "/api/login-user";
@@ -15,6 +15,7 @@ public class Connection {
     private String getProductType = AdminHostIP+ "/api/itemcategory-view";
     private String getShopItem = AdminHostIP+ "/api/shopItem-shop/";
     private String getItems = AdminHostIP + "/api/item-itemShop/";
+    private String getItemswithItem = AdminHostIP + "/api/item-withItemShop/";
     private String getAddresses = UserHostIp + "/api/user-address/";
     private String getCityFromDistrict = AdminHostIP + "/api/city-district/";
     private String getInvoice = AdminHostIP+"/api/invoiceRow-order/";
@@ -121,5 +122,9 @@ public class Connection {
 
     public String getEditUser() {
         return EditUser;
+    }
+
+    public String getGetItemswithItem() {
+        return getItemswithItem;
     }
 }

@@ -8,7 +8,7 @@ public class Order {
     private String OrderName;
     private String item_shop_id;
     private String orderID;
-
+    private boolean isOrderState;
     public Order() {
     }
 
@@ -31,6 +31,22 @@ public class Order {
     public float calcTotalOrderPrice() {
         totalOrderPrice = OrderQuantity * OrderPrice;
         return totalOrderPrice;
+    }
+
+    public float getTotalOrderPrice() {
+        return totalOrderPrice;
+    }
+
+    public void setTotalOrderPrice(float totalOrderPrice) {
+        this.totalOrderPrice = totalOrderPrice;
+    }
+
+    public boolean isOrderState() {
+        return isOrderState;
+    }
+
+    public void setOrderState(boolean orderState) {
+        isOrderState = orderState;
     }
 
     public String getOrderID() {

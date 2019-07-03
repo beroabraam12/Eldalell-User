@@ -1,5 +1,6 @@
 package com.project.eldalell.user.Fragments;
 
+import android.app.Activity;
 import android.content.Context;
 
 import android.graphics.drawable.Drawable;
@@ -15,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,8 +25,15 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.project.eldalell.user.Activity.MainActivity;
 import com.project.eldalell.user.Adapter.OrderReviewAdapter;
+import com.project.eldalell.user.Classes.Connection;
 import com.project.eldalell.user.Classes.Order;
 import com.project.eldalell.user.R;
 import com.pusher.client.Pusher;
@@ -31,6 +41,7 @@ import com.pusher.client.PusherOptions;
 import com.pusher.client.channel.Channel;
 import com.pusher.client.channel.SubscriptionEventListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -71,23 +82,30 @@ public class TraceOrderFragment extends Fragment {
     }
   }
 
-  CircleImageView imgStep1, imgStep2, imgStep3;
-    TextView tvStep1, tvStep2, tvStep3, tvTitle, tvSelectedAddress, tvOrderID;
+    public static CircleImageView imgStep1, imgStep2, imgStep3;
+    TextView tvStep1, tvStep2, tvStep3, tvTitle, tvSelectedAddress;
+    public static TextView tvOrderID;
   ImageView imgBackBar, search;
-  RecyclerView rvOrderPreview;
+    public static RecyclerView rvOrderPreview;
   Toolbar mainToolBar;
   public static ArrayList<Order> orders;
   public static TextView tvSubTotalTrace, tvTotalReviewPriceTrace;
   public NavController navController;
+    RequestQueue requestQueue;
+    public static ProgressBar traceOrderFragmentProgress;
+    public static LinearLayout traceOrderFragmentLayout;
+    Activity activity = getActivity();
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState) {
     View v = inflater.inflate(R.layout.fragment_trace_order, container, false);
-
+      requestQueue = Volley.newRequestQueue(getContext().getApplicationContext());
     rvOrderPreview = v.findViewById(R.id.rvOrderPreview);
     tvSubTotalTrace = v.findViewById(R.id.tvSubTotalTrace);
     tvSelectedAddress = getActivity().findViewById(R.id.tvSelectedAddress);
     tvTotalReviewPriceTrace = v.findViewById(R.id.tvTotalReviewPriceTrace);
+      traceOrderFragmentLayout = v.findViewById(R.id.traceOrderFragmentLayout);
+      traceOrderFragmentProgress = v.findViewById(R.id.traceOrderFragmentProgress);
     imgStep1 = v.findViewById(R.id.imgStep1);
     imgStep2 = v.findViewById(R.id.imgStep2);
     imgStep3 = v.findViewById(R.id.imgStep3);
@@ -121,17 +139,37 @@ public class TraceOrderFragment extends Fragment {
     });
 
     Drawable background = getContext().getResources().getDrawable(R.drawable.btn_filter_shape);
+      Drawable back = getContext().getResources().getDrawable(R.drawable.step_unfinish);
     imgStep1.setBackground(background);
 
       if (orders == null) {
           orders = new ArrayList<>();
 
       }
-    rvOrderPreview.setLayoutManager(new LinearLayoutManager(getActivity()));
-    OrderReviewAdapter adapter = new OrderReviewAdapter(getActivity(), orders, false);
-    rvOrderPreview.setAdapter(adapter);
-      tvOrderID.setText("Order #" + orders.get(0).getOrderID());
 
+      if (OrderHistoryFragment.fromHistory) {
+          imgStep2.setBackground(background);
+          imgStep3.setBackground(background);
+          OrderHistoryFragment.fromHistory = false;
+      } else if (UpcomingFragment.inUpComing) {
+          if (orders.get(0).isOrderState()) {
+              imgStep2.setBackground(background);
+              imgStep3.setBackground(back);
+          } else {
+              imgStep2.setBackground(back);
+              imgStep3.setBackground(back);
+          }
+          UpcomingFragment.inUpComing = false;
+      } else {
+          traceOrderFragmentProgress.setVisibility(View.GONE);
+          traceOrderFragmentLayout.setVisibility(View.VISIBLE);
+          rvOrderPreview.setLayoutManager(new LinearLayoutManager(getActivity()));
+          OrderReviewAdapter adapter = new OrderReviewAdapter(getActivity(), orders, false);
+          rvOrderPreview.setAdapter(adapter);
+          tvOrderID.setText("Order #" + orders.get(0).getOrderID());
+      }
+
+      activity = getActivity();
 
       PusherOptions options = new PusherOptions();
       options.setCluster("eu");
@@ -141,7 +179,7 @@ public class TraceOrderFragment extends Fragment {
       channel.bind("BolleanEvent", new SubscriptionEventListener() {
           @Override
           public void onEvent(String channelName, String eventName, final String data) {
-              getActivity().runOnUiThread(new Runnable() {
+              activity.runOnUiThread(new Runnable() {
                   @Override
                   public void run() {
                       try {
@@ -150,7 +188,7 @@ public class TraceOrderFragment extends Fragment {
                           if (id.equals(orders.get(0).getOrderID())) {
                               String delivery_man_accepted = object.getString("delivery_man_accepted");
                               if (delivery_man_accepted.equals("1")) {
-                                  Drawable background = getContext().getResources().getDrawable(R.drawable.btn_filter_shape);
+                                  Drawable background = activity.getResources().getDrawable(R.drawable.btn_filter_shape);
                                   imgStep2.setBackground(background);
                               }
                           }
@@ -181,7 +219,65 @@ public class TraceOrderFragment extends Fragment {
     return v;
   }
 
-  public void onButtonPressed(Uri uri) {
+    public static void getInvoice(RequestQueue requestQueue, final Context context, final ArrayList<Order> orders) {
+        Connection connection = new Connection();
+        for (int i = 0; i < orders.size(); i++) {
+            final int finalI = i;
+            StringRequest request = new StringRequest(Request.Method.GET, connection.getGetItemswithItem() + orders.get(i).getItem_shop_id(),
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            try {
+                                JSONObject o = new JSONObject(response);
+                                JSONArray items = o.getJSONArray("item");
+                                JSONObject item = items.getJSONObject(0);
+                                orders.get(finalI).setOrderName(item.getString("item_name"));
+                                orders.get(finalI).setOrderPrice(Float.parseFloat(item.getString("new_retail_price")));
+
+                                rvOrderPreview.setLayoutManager(new LinearLayoutManager(context));
+                                OrderReviewAdapter adapter = new OrderReviewAdapter((Activity) context, orders, false);
+                                rvOrderPreview.setAdapter(adapter);
+                                tvOrderID.setText("Order #" + orders.get(0).getOrderID());
+                                traceOrderFragmentProgress.setVisibility(View.GONE);
+                                traceOrderFragmentLayout.setVisibility(View.VISIBLE);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            });
+            requestQueue.add(request);
+        }
+        if (imgStep2 != null) {
+            if (UpcomingFragment.fromUpcoming) {
+                if (orders.get(0).isOrderState()) {
+                    Drawable back = context.getResources().getDrawable(R.drawable.step_unfinish);
+                    Drawable backe = context.getResources().getDrawable(R.drawable.btn_filter_shape);
+                    TraceOrderFragment.imgStep2.setBackground(backe);
+                    TraceOrderFragment.imgStep3.setBackground(back);
+                } else if (!orders.get(0).isOrderState()) {
+                    Drawable back = context.getResources().getDrawable(R.drawable.step_unfinish);
+                    TraceOrderFragment.imgStep2.setBackground(back);
+                    TraceOrderFragment.imgStep3.setBackground(back);
+
+                }
+            } else {
+                Drawable backe = context.getResources().getDrawable(R.drawable.btn_filter_shape);
+                TraceOrderFragment.imgStep2.setBackground(backe);
+                TraceOrderFragment.imgStep3.setBackground(backe);
+            }
+        }
+
+
+    }
+
+    public void onButtonPressed(Uri uri) {
     if (mListener != null) {
       mListener.onFragmentInteraction(uri);
     }

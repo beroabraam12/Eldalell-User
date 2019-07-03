@@ -13,19 +13,36 @@ import android.widget.TextView;
 
 import androidx.navigation.Navigation;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.google.gson.JsonObject;
+import com.project.eldalell.user.Classes.Connection;
 import com.project.eldalell.user.Classes.History;
+import com.project.eldalell.user.Classes.Order;
+import com.project.eldalell.user.Fragments.OrderHistoryFragment;
+import com.project.eldalell.user.Fragments.TraceOrderFragment;
 import com.project.eldalell.user.R;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
     private ArrayList<History> HistoryList;
     private Activity activity;
+    RequestQueue requestQueue;
 
     public HistoryAdapter(ArrayList<History> historyList, Activity activity) {
         HistoryList = historyList;
         this.activity = activity;
+        requestQueue = Volley.newRequestQueue(activity.getApplicationContext());
     }
 
     @NonNull
@@ -44,7 +61,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     @Override
     public void onBindViewHolder(@NonNull HistoryViewHolder historyViewHolder, int i) {
 
-        History curruntHistory = new History();
+        final History curruntHistory = new History();
         curruntHistory.setShopName(HistoryList.get(i).getShopName());
         curruntHistory.setOrderDate(HistoryList.get(i).getOrderDate());
         curruntHistory.setOrderID(HistoryList.get(i).getOrderID());
@@ -63,11 +80,48 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
                 .into(historyViewHolder.imgLogo);
         historyViewHolder.History.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Navigation.findNavController(v).navigate(R.id.traceOrderFragment);
+            public void onClick(View view) {
+                TraceOrderFragment.orders = getOrders(requestQueue, activity, curruntHistory, view);
+
             }
         });
 
+    }
+
+    private ArrayList<Order> getOrders(final RequestQueue requestQueue,
+                                       final Activity activity, final History history, final View v) {
+        final ArrayList<Order> orders = new ArrayList<>();
+        Connection connection = new Connection();
+        final StringRequest request = new StringRequest(Request.Method.GET, connection.getGetInvoice() + history.getOrderID(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject o = new JSONObject(response);
+                            JSONArray a = o.getJSONArray("InvoiceRow");
+                            for (int i = 0; i < a.length(); i++) {
+                                JSONObject object = a.getJSONObject(i);
+                                Order current = new Order();
+                                current.setOrderID(history.getOrderID());
+                                current.setItem_shop_id(object.getString("item_shop_id"));
+                                current.setOrderQuantity(Integer.valueOf(object.getString("quantity")));
+                                orders.add(current);
+                            }
+                            TraceOrderFragment.getInvoice(requestQueue, activity, orders);
+                            OrderHistoryFragment.fromHistory = true;
+                            Navigation.findNavController(v).navigate(R.id.traceOrderFragment);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueue.add(request);
+        return orders;
     }
 
 
