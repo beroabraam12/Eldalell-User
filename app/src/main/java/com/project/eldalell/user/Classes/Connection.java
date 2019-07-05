@@ -1,8 +1,8 @@
 package com.project.eldalell.user.Classes;
 
 public class Connection {
-    private String UserHostIp = "http://192.168.0.105:5000";
-    private String AdminHostIP = "http://192.168.0.105:8000";
+    private String UserHostIp = "http://192.168.1.32:5000";
+    private String AdminHostIP = "http://192.168.1.32:8000";
 
     private String SignUpUrl = UserHostIp + "/api/register-user";
     private String LoginUrl = UserHostIp + "/api/login-user";

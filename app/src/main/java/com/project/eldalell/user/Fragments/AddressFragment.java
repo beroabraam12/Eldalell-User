@@ -183,7 +183,7 @@ public class AddressFragment extends Fragment {
         return v;
     }
 
-    private ArrayList<Districts> getDistricts(RequestQueue requestQueue, String cityID) {
+    private ArrayList<Districts> getDistricts(final RequestQueue requestQueue, final String cityID) {
         final ArrayList<Districts> districts1 = new ArrayList<>();
         Connection connection = new Connection();
         StringRequest request = new StringRequest(Request.Method.GET, connection.getGetDistrict() + cityID,
@@ -216,6 +216,7 @@ public class AddressFragment extends Fragment {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                getDistricts(requestQueue, cityID);
                 Toast.makeText(getContext(), "Api Error", Toast.LENGTH_SHORT).show();
             }
         });
