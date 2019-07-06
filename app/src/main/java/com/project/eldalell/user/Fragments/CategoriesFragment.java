@@ -214,7 +214,7 @@ public class CategoriesFragment extends Fragment {
                             JSONObject item = object.getJSONObject("Item");
 
                             currentProduct.setProductName(item.getString("item_name"));
-                            currentProduct.setImgProduct(connection.getAdminHostIP() + item.getString("image"));
+                            currentProduct.setImgProduct(connection.getAdminHostIP() + "/public" + item.getString("image"));
                             currentProduct.setItem_category_id(item.getString("item_category_id"));
                             products.add(currentProduct);
                             if (ReviewOrderFragment.fromReview){
@@ -254,14 +254,13 @@ public class CategoriesFragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            JSONObject jsonObject = new JSONObject(response);
-                            JSONArray prodectTypes = jsonObject.getJSONArray("ItemCategory");
+                            JSONArray prodectTypes = new JSONArray(response);
                             for (int i=0; i<prodectTypes.length();i++)
                             {
                                 JSONObject type = prodectTypes.getJSONObject(i);
                                 ProdectType prodectType = new ProdectType();
                                 prodectType.setId(type.getString("id"));
-                                prodectType.setImage(connection.getAdminHostIP()+type.getString("image"));
+                                prodectType.setImage(connection.getAdminHostIP() + "/public" + type.getString("image"));
                                 prodectType.setItem_category_name(type.getString("item_category_name"));
 
                                 prodectsTypes.add(prodectType);

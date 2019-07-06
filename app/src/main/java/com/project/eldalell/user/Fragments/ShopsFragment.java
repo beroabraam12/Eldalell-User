@@ -172,7 +172,7 @@ public class ShopsFragment extends Fragment {
                         currentShop.setId(object.getString("id"));
                         currentShop.setShopName(object.getString("shop_name"));
                         currentShop.setShopDetails(object.getString("description"));
-                        currentShop.setShopLogo(connection.getAdminHostIP()+object.getString("logo"));
+                        currentShop.setShopLogo(connection.getAdminHostIP() + "/public" + object.getString("logo"));
                         currentShop.setDelivery_cost(Float.parseFloat(object.getString("delivery_cost")));
                         currentShop.setDelivery_time(Integer.parseInt(object.getString("delivery_time")));
                         currentShop.setShop_type_id(object.getString("shop_type_id"));
@@ -221,12 +221,11 @@ public class ShopsFragment extends Fragment {
             @Override
             public void onResponse(String response) {
                 try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    JSONArray shopType = jsonObject.getJSONArray("shops_type");
+                    JSONArray shopType = new JSONArray(response);
                     for (int i = 0; i < shopType.length(); i++) {
                         ShopType currentShopType = new ShopType();
                         JSONObject type = shopType.getJSONObject(i);
-                        currentShopType.setImage(connection.getAdminHostIP() + type.getString("image"));
+                        currentShopType.setImage(connection.getAdminHostIP() + "/public" + type.getString("image"));
                         currentShopType.setId(type.getString("id"));
                         currentShopType.setShop_type_name(type.getString("shop_type_name"));
                         shopTypes.add(currentShopType);

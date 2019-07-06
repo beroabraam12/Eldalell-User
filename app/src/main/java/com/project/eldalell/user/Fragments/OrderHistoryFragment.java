@@ -109,7 +109,7 @@ public class OrderHistoryFragment extends Fragment {
                   for (int i = 0; i < Orders.length(); i++) {
                     JSONObject order = Orders.getJSONObject(i);
                     History history = new History();
-                    history.setImage(connection.getAdminHostIP() + order.getString("logo"));
+                      history.setImage(connection.getAdminHostIP() + "/public" + order.getString("logo"));
                     history.setOrderID(order.getString("id"));
                     history.setOrderDate(order.getString("updated_at"));
                     history.setShopName(order.getString("shop_name"));

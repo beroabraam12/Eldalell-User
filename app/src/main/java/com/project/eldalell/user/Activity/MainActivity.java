@@ -137,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
         String token = prefs.getString("token", null);
         if (token != null) {
-
             user = getUserAPI(token, MainActivity.this, requestQueue, nvView, tvHeaderUserName);
 
         }

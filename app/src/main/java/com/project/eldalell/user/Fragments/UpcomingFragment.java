@@ -121,7 +121,7 @@ public class UpcomingFragment extends Fragment {
                   for (int i = 0; i < Orders.length(); i++) {
                     JSONObject order = Orders.getJSONObject(i);
                     Upcoming upcoming = new Upcoming();
-                    upcoming.setImage(connection.getAdminHostIP() + order.getString("logo"));
+                    upcoming.setImage(connection.getAdminHostIP() + "/public" + order.getString("logo"));
                     upcoming.setOrderID(order.getString("id"));
                     upcoming.setOrderDate(order.getString("updated_at"));
                     upcoming.setShopName(order.getString("shop_name"));

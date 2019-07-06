@@ -44,7 +44,7 @@ public class ProdectTypeAdapter extends RecyclerView.Adapter<ProdectTypeAdapter.
         Glide.with(activity)
                 .load(prodectTypes.get(i).getImage())
                 .centerCrop()
-                .placeholder(R.drawable.b)
+                .placeholder(R.drawable.btn_filter_shape)
                 .into(holder.imgProdectType);
         holder.tvProdectType.setText(prodectTypes.get(i).getItem_category_name());
         holder.ProdectType.setOnClickListener(new View.OnClickListener() {
